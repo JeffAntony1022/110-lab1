@@ -29,3 +29,24 @@ class LemonadeStand {
         return profit;
     }
 }
+
+function playDay(stand: LemonadeStand, day: number): void{
+    const costPerGlass = 0.02;  //placeholder cost to make a glass as shown in day 1 of game, will fluctuate
+
+    // SETUP SCREEN 
+    console.log('Day ${day}');
+    console.log('The cost of lemonade today is ${costPerGlass}');
+    console.log('Wallet: ${stand.assets}');
+
+    // PLAYER INPUT SCREEN
+    const choices: DayChoices = {
+        glassesToMake: 10,
+        signsToMake: 5,
+        pricePerGlass: 1.00,
+    };         //player's choices, hardcoded for now, will change to be input based
+
+    // RUN DAY, REPORT
+    const profit = stand.runDay(choices, costPerGlass);
+    console.log('Profit for the Day: ${profit}');
+    console.log('Wallet: ${stand.assets}');
+}
