@@ -13,6 +13,11 @@ interface DayChoices {
     pricePerGlass: number;
 }
 
+interface DayResult {
+    glassesSold: number;
+    profit: number;
+}
+
 type Weather = "sunny" | "hot" | "cloudy" | "rainy";
 const WEATHERS: Weather[] = ["sunny", "hot", "cloudy", "rainy"];
 
@@ -29,27 +34,57 @@ class LemonadeStand {
     }
     
     //Runs one day - returns the day's profit so we can print a report
-    runDay(choices: DayChoices, costPerGlass: number): number {
+    runDay(choices: DayChoices, costPerGlass: number, weather: Weather): DayResult {
         const SIGN_COST = 0.15;  //cost to make a sign is 15c
-
         //How much did u spend today
         const expenses = choices.signsToMake * SIGN_COST + choices.glassesToMake * costPerGlass;
-
-        //number of glasses that actually sell depends on advertising, weather, and price
-        const glassesSold = choices.glassesToMake; //for now, all glasses made are sold
+        
+        const demand = Math.round(glassDemand(weather, choices));
+        const glassesSold = Math.min(choices.glassesToMake, demand);
 
         const income = glassesSold * choices.pricePerGlass;
         const profit = income - expenses;
         this.assets += profit;  //accumulate profit day by day
-        return profit;
+        return { glassesSold, profit };
     }
+}
+
+function glassDemand(weather: Weather, choices: DayChoices): number {   //used AI for help with formula
+    //1. demand based on weather
+    let base: number;
+    switch(weather){
+        case "hot":
+            base = 60;
+            break;
+        case "sunny":
+            base = 20;
+            break;
+        case "cloudy":
+            base = 25;
+            break;
+        case "rainy":
+            base = 10;
+            break;
+    }
+
+    //2. demand based on price
+    //assume nobody pays $5+, if cheaper than that, a bigger fraction buys
+    const priceFraction = Math.max(0, 1 - choices.pricePerGlass / 2.00);
+
+    //3. demand based on advertising
+    //each sign pulls in 10% more customers
+    const adBoost = 1 + Math.min(choices.signsToMake * 0.1, 0.5);
+
+    //4. total demand
+    return base * priceFraction * adBoost;
 }
 
 async function playDay(stand: LemonadeStand, day: number): Promise<void>{
     const costPerGlass = 0.02;  //placeholder cost to make a glass as shown in day 1 of game, will fluctuate
+    const weather = randomWeather();  //get today's weather
 
     // SETUP SCREEN 
-    console.log(`Day ${day}`);
+    console.log(`Day ${day} (weather: ${weather})`);
     console.log(`The cost of lemonade today is $${costPerGlass.toFixed(2)}`);
     console.log(`Wallet: $${stand.assets.toFixed(2)}`);
 
@@ -61,8 +96,9 @@ async function playDay(stand: LemonadeStand, day: number): Promise<void>{
     };         //player's choices
 
     // RUN DAY, REPORT
-    const profit = stand.runDay(choices, costPerGlass);
-    console.log(`\nProfit for the Day: $${profit.toFixed(2)}`);
+    const profit = stand.runDay(choices, costPerGlass, weather);
+    console.log(`\nProfit for the Day: $${profit.profit.toFixed(2)}`);
+    console.log(`Glasses Sold: ${profit.glassesSold}`);
     console.log(`Wallet: $${stand.assets.toFixed(2)}`);
 
     await rl.question("Press Enter to continue...\n\n");
