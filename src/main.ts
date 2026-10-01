@@ -1,4 +1,11 @@
+import * as readline from "readline/promises";
+
 //console.log("Hello, world!");
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
 
 interface DayChoices {
     glassesToMake: number;
@@ -30,7 +37,7 @@ class LemonadeStand {
     }
 }
 
-function playDay(stand: LemonadeStand, day: number): void{
+async function playDay(stand: LemonadeStand, day: number): Promise<void>{
     const costPerGlass = 0.02;  //placeholder cost to make a glass as shown in day 1 of game, will fluctuate
 
     // SETUP SCREEN 
@@ -40,21 +47,26 @@ function playDay(stand: LemonadeStand, day: number): void{
 
     // PLAYER INPUT SCREEN
     const choices: DayChoices = {
-        glassesToMake: 10,
-        signsToMake: 5,
-        pricePerGlass: 1.00,
-    };         //player's choices, hardcoded for now, will change to be input based
+        glassesToMake: Number(await rl.question("How many glasses to make? ")),
+        signsToMake: Number(await rl.question("How many signs to make @ $0.15 each? ")),
+        pricePerGlass: Number(await rl.question("How much do you want to charge per glass in dollars? ")),
+    };         //player's choices
 
     // RUN DAY, REPORT
     const profit = stand.runDay(choices, costPerGlass);
-    console.log(`Profit for the Day: $${profit.toFixed(2)}`);
+    console.log(`\nProfit for the Day: $${profit.toFixed(2)}`);
     console.log(`Wallet: $${stand.assets.toFixed(2)}`);
+
+    await rl.question("Press Enter to continue...\n\n");
 }
 
 // PLAY
-const stand = new LemonadeStand();
-// playDay(stand, 1);
-//let's loop it like the real game
-for (let day = 1; day <= 5; day++){
-    playDay(stand, day);
+async function main(){
+    const stand = new LemonadeStand();
+    
+    for(let day = 1; day <= 7; day++){
+        await playDay(stand, day);  //await each day before starting the next
+    }
 }
+
+main();
