@@ -2,4 +2,4 @@ As a player, I should be able to see the day's cost-per-glass and my current ass
 
 As a player, I should be able to input how many supplies to buy at the day's prices, so I can stock my inventory and control my spending against my cash balance.
 
-As a player, I should be able to see the EOD results (cups sold, supplies remaining, and current cash balance), so I can track my profit and plan my strategy for the next day accordingly.
+As a player, I should be able to see the EOD results (cups sold and current cash balance), so I can track my profit and plan my strategy for the next day accordingly.
