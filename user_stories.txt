@@ -1,4 +1,4 @@
-As a player, I should be able to see each day's weather and current supply prices (cups, ice, lemons, sugar) before I buy, so I can devide how much to purchase based on expected demand and cost.
+As a player, I should be able to see the day's cost-per-glass and my current assets before I decide anything, so I can choose how many glasses to make, how many advertising signs to buy, and what price to charge.
 
 As a player, I should be able to input how many supplies to buy at the day's prices, so I can stock my inventory and control my spending against my cash balance.
 
