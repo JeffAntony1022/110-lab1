@@ -13,6 +13,14 @@ interface DayChoices {
     pricePerGlass: number;
 }
 
+type Weather = "sunny" | "hot" | "cloudy" | "rainy";
+const WEATHERS: Weather[] = ["sunny", "hot", "cloudy", "rainy"];
+
+function randomWeather(): Weather {
+    const i = Math.floor(Math.random() * WEATHERS.length);
+    return WEATHERS[i];
+}
+
 class LemonadeStand {
     assets: number;             //cash
 
